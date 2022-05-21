@@ -1,7 +1,7 @@
 package it.ts.dotcom.cassia.telemonitoraggio.utils;
 
-import com.google.common.base.CaseFormat;
 import it.ts.dotcom.cassia.telemonitoraggio.dto.ExportlDataViewDto;
+import it.ts.dotcom.cassia.telemonitoraggio.export.ExelExporterService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,16 +11,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.Instant;
 import java.util.*;
-
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(initializers = ConfigDataApplicationContextInitializer.class)
@@ -29,6 +25,7 @@ class ExsportHeaderPassiTest {
 
     @Autowired
     private ExsportHeaderPassi headerPassi;
+
     private ExportlDataViewDto dataViewDto;
 
 //    private final static Instant  DATA_TENTATIVO = Date.valueOf("2022-05-03").toInstant();
@@ -54,67 +51,38 @@ class ExsportHeaderPassiTest {
     }
 
     @Test
-    public void whenYamlList_thenLoadSimpleList() throws ClassNotFoundException, NoSuchFieldException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void whenYamlList_thenLoadSimpleList() throws  NoSuchFieldException,  IllegalAccessException {
 
-        final  String GET = "get";
-        final  String SET = "set";
 
-//        ExportlDataViewDto exportlDataViewDto = (ExportlDataViewDto)  Class.forName(ExportlDataViewDto.class.getName())
-//                .getConstructor()
-//                .newInstance();
+        System.out.println("Inizio Export\n");
 
+        List<ExportlDataViewDto> singleton = Collections.singletonList(dataViewDto);
+
+        ExelExporterService<ExportlDataViewDto> exelExporterService = new ExelExporterService<>(singleton);
 
         Map<Integer, String> exportExel = headerPassi.getExport();
-        System.out.println("\n====================================================================================================================================\n");
-        System.out.println("Inizio Export");
-        System.out.println("\n====================================================================================================================================\n");
-        for(Map.Entry<Integer, String> map: exportExel.entrySet()){
-            Integer columnNumber = map.getKey();
-            String columnName = map.getValue();
+        exelExporterService.setExportExel(exportExel);
+        exelExporterService.writeHeader("sheet name test");
+        exelExporterService.write();
 
-            String columnValueToFielName = trsfornmColumnValue(columnName);
-
-            Field field = getFieldValue(columnValueToFielName, ExportlDataViewDto.class);
-
-            Object fieldValue = Optional.ofNullable(field.get(dataViewDto)).orElse("");
-
-            System.out.printf("%-20s: %s \n" ,field.getName(), fieldValue);
-
-        }
-
-//        Method[] methods = getMetods(ExportlDataViewDto.class.getName());
-//
-//        List<String> actualMethods = getMethodNames(methods);
-
-//        actualMethods.forEach(System.out::println);
+        Map<Integer, Map<Integer, Object>> extracted = exelExporterService.extrctGlobal();
+        printVMap(extracted);
 
     }
 
 
-    @Test
-    public void whenYamlList_thenLoadSimpleListImport(){
-        Map<Integer, String> importExel = headerPassi.getImportExel();
-        System.out.println("\n====================================================================================================================================\n");
-        System.out.println("Inizio Impoert");
-        System.out.println("\n====================================================================================================================================\n");
-        for(Map.Entry<Integer, String> map: importExel.entrySet()){
-            Integer columnNumber = map.getKey();
-            String columnName = map.getValue();
-
-            String columnValue = trsfornmColumnValue(columnName);
-
-            System.out.println(columnValue);
-
-        }
-
+    private static void printVMap(Map<Integer, Map<Integer, Object>> extracted){
+        extracted.forEach((key, value) -> {
+            print("","Record", key);
+            for (Map.Entry<Integer, Object> map : value.entrySet()) {
+                print("\t-", map.getKey(), map.getValue());
+            }
+        });
     }
 
-    private static Field getFieldValue(String columnValue, Class<?> cls) throws NoSuchFieldException, IllegalAccessException {
-        Field fieldID = cls.getDeclaredField(columnValue);
-        fieldID.setAccessible(true);
-        return fieldID;
+    private static void print(String start, Object txt1, Object txt2){
+         System.out.printf("%s %s:\t %s\n",start, txt1, txt2);
     }
-
     private static Instant getInstantDate(int hh, int m, int d){
         Calendar c1 = Calendar.getInstance();
         c1.set(Calendar.MONTH, m);
@@ -128,6 +96,24 @@ class ExsportHeaderPassiTest {
         return clazz.getDeclaredMethods();
     }
 
+//    @Test
+//    public void whenYamlList_thenLoadSimpleListImport(){
+//        Map<Integer, String> importExel = headerPassi.getImportExel();
+//        System.out.println("\n====================================================================================================================================\n");
+//        System.out.println("Inizio Impoert");
+//        System.out.println("\n====================================================================================================================================\n");
+//        for(Map.Entry<Integer, String> map: importExel.entrySet()){
+//            Integer columnNumber = map.getKey();
+//            String columnName = map.getValue();
+//
+//            String columnValue = formatColumnName(columnName);
+//
+//            System.out.println(columnValue);
+//
+//        }
+//
+//    }
+
     private static List<String> getMethodNames(Method[] methods) {
         List<String> methodNames = new ArrayList<>();
         for (Method method : methods)
@@ -139,9 +125,9 @@ class ExsportHeaderPassiTest {
         return type.concat(name);
     }
 
-    public static String trsfornmColumnValue(String oldValue){
-        String replace = oldValue.replace(" ", "_");
-        return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, replace);
-    }
+//    public static String formatColumnName(String oldValue){
+//        return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL,
+//                oldValue.toLowerCase().replace(" ", "_"));
+//    }
 
 }

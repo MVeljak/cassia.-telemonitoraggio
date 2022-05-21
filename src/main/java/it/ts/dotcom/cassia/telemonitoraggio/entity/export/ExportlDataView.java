@@ -96,4 +96,6 @@ public class ExportlDataView {
     @Column(name = "operatore")
     private String  operatore;
 
+   
+
 }

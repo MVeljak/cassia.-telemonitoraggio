@@ -16,66 +16,6 @@ spring:
       ddl-auto: create-drop
     database: POSTGRESQL
 
-
-exprt:
-  passi:
-    header:
-      0: AZIENDA
-      1: MESE
-      2: NR
-      3: ESTRAZIONE
-      4: RUOLO
-      5: NOME
-      6: COGNOME
-      7: TELEFONO
-      8: DATA DI NASCITA
-      9: DATA I TENTATIVO
-      10: DATA II TENTATIVO
-      11: DATA III TENTATIVO
-      12: DATA IV TENTATIVO
-      13: DATA V TENTATIVO
-      14: DATA VI TENTATIVO
-      15: TENTATIVO SERALE
-      16: TENTATIVO DEL SABATO
-      17: TENTATIVI AGGIUNTIVI
-      18: SOSTITUZIONI
-      19: NOTE CHIAMATA
-      20: NOTE TL
-      21: ESITO CHIAMATA
-      22: OPERATOREv
-
-import:
-  passi:
-    header:
-      0: D
-      1: Anno
-      2: Mese
-      3: Ruolo
-      4: Nome intervistatore
-      5: Nome intervistato
-      6: Cognome intervistato
-      7: Telefono intervistato
-      8: Data di nascita intervistato
-      9: Sesso intervistato
-      10: Via intervistato
-      11: Civico intervistato
-      12: CAP intervistato
-      13: Comune intervistato
-      14: Cod Comune ISTAT
-      15: Distretto intervistato
-      16: Nome medico
-      17: Cognome medico
-      18: Telefono medico
-      19: Via ambulatorio
-      20: Civico ambulatorio
-      21: CAP medico
-      22: Comune ambulatorio
-      23: Nota
-      24: Nota x intervistatore
-      25: ISTAT nascita
-      26: ISTAT cittadinanza
-
-
 passi:
   import-exel:
     0: D

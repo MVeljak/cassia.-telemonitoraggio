@@ -14,7 +14,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExportlDataViewDto implements Serializable {
+public class  ExportlDataViewDto implements Serializable {
     private UUID id;
     private BigDecimal idNominativo;
     private String nome;
