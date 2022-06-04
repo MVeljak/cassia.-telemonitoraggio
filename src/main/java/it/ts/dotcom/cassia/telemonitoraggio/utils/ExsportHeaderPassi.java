@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Map;
 
 @Data
-public class ExsportHeaderPassi {
+public class  ExsportHeaderPassi {
 
     private Map<Integer, String> importExel;
     private Map<Integer, String> export;

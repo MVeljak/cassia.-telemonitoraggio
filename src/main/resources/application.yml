@@ -69,3 +69,25 @@ passi:
     20: NOTE TL
     21: ESITO CHIAMATA
     22: OPERATORE
+
+
+user-export:
+  fiellds:
+    - AZIENDA
+    - MESE
+    - NR
+    - ESTRAZIONE
+    - RUOLO
+    - NOME
+    - COGNOME
+    - TELEFONO
+    - DATA DI NASCITA
+
+
+ellysse:
+  url:
+    base: http://localhost:3001/ws
+  request:
+    tocken: requestTocken
+    insert:
+      pratice: /OutBuond/insertPratice1

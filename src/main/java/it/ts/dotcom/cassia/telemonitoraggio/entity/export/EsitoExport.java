@@ -1,13 +1,20 @@
 package it.ts.dotcom.cassia.telemonitoraggio.entity.export;
 
+import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "esito_export")
 public class EsitoExport {
@@ -16,36 +23,28 @@ public class EsitoExport {
     @Column(name = "id", nullable = false)
     private UUID id;
 
-    @OneToMany(mappedBy = "esitoExport", orphanRemoval = true)
-    private Set<NewExportDataView> newExportDataViews = new LinkedHashSet<>();
+    @Column(name = "data_tentativo")
+    private Instant dataTentativo;
+
+    @Column(name = "sostituzioni")
+    private String sostituzioni;
+
+    @Column(name = "note_chiamata")
+    private String noteChiamata;
+
+    @Column(name = "note_tl")
+    private String noteTl;
+
+    @Column(name = "esito_chiamata")
+    private String esitoChiamata;
+
+    @Column(name = "operatore")
+    private String  operatore;
 
     @ManyToOne
     @JoinColumn(name = "data_view_id")
     private NewExportDataView newExportDataView;
 
-    public NewExportDataView getNewExportDataView() {
-        return newExportDataView;
-    }
-
-    public void setNewExportDataView(NewExportDataView newExportDataView) {
-        this.newExportDataView = newExportDataView;
-    }
-
-    public Set<NewExportDataView> getNewExportDataViews() {
-        return newExportDataViews;
-    }
-
-    public void setNewExportDataViews(Set<NewExportDataView> newExportDataViews) {
-        this.newExportDataViews = newExportDataViews;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
 
     @Override
     public boolean equals(Object o) {

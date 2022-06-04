@@ -3,6 +3,7 @@ package it.ts.dotcom.cassia.telemonitoraggio.export;
 import com.google.common.base.CaseFormat;
 import it.ts.dotcom.cassia.telemonitoraggio.dto.ExportlDataViewDto;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
 import org.apache.poi.ss.usermodel.Cell;
@@ -16,16 +17,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.lang.reflect.Field;
 import java.sql.Date;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class ExelExporterService<T> {
 
     @Setter
     private List<T> listRecords;
-    private XSSFWorkbook workbook = null;
+    private final XSSFWorkbook workbook;
     private XSSFSheet sheet;
 
     @Setter
@@ -82,64 +80,45 @@ public class ExelExporterService<T> {
     }
 
     public void write() throws NoSuchFieldException, IllegalAccessException {
-        int rowCount = 1;
+        extrctGlobal()
+                .forEach((index, value) -> new CellGenerator(creteStyle(
+                StyleBuilder.builder()
+                        .heght(14)
+                        .build())
+        ).createSingleCell(index, value));
+
+    }
 
 
-        StyleBuilder styleBuilder = StyleBuilder.builder()
-                .heght(14)
-                .build();
-        CellStyle cellStyle = creteStyle(styleBuilder);
-
-        Map<Integer, Map<Integer, Object>> extracted = extrctGlobal();
-
-        extracted.forEach((key, value) -> {
-            //System.out.printf("Record: %s\n", key);
+    @Value
+    private class CellGenerator{
+        CellStyle cellStyle;
+        public void createSingleCell(Integer index, Map<Integer, Object> value){
             for (Map.Entry<Integer, Object> map : value.entrySet()) {
-               // System.out.printf("\t%s:\t%s\n", map.getKey(), map.getValue());
-                Row row = sheet.createRow(key);
+                Row row = sheet.createRow(index);
                 createCell(row, map.getKey(), map.getValue(), cellStyle);
             }
-
-        });
-
-//        for (T record : listRecords) {
-//            Row row = sheet.createRow(rowCount++);
-//            int columnCount = 0;
-//
-////            createCell(row, columnCount++, record.getId(), style);
-////            createCell(row, columnCount++, record.getStudentName(), style);
-////            createCell(row, columnCount++, record.getExamYear(), style);
-////            createCell(row, columnCount++, record.getScore(), style);
-//
-//        }
+        }
     }
 
-    private CellStyle creteStyle(int heght, boolean bold) {
-        CellStyle style = workbook.createCellStyle();
-        XSSFFont font = workbook.createFont();
-        font.setFontHeight(heght);
-        font.setBold(bold);
-        style.setFont(font);
-        return style;
-    }
 
     private CellStyle creteStyle(StyleBuilder builder) {
         CellStyle style = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();
         font.setBold(builder.bold);
-
-        font.setFontHeight(builder.heght);
-
+        font.setFontHeight(builder.getHeght());
         style.setFont(font);
         return style;
     }
 
     @Builder
+    @Getter
     private static class StyleBuilder{
         int heght;
         @Builder.Default
         boolean bold = false;
     }
+
 
 //    public void generate(HttpServletResponse response) throws IOException {
 //        writeHeader();
@@ -195,7 +174,7 @@ public class ExelExporterService<T> {
     private static class ValueGenerator{
 
         Class<?> clazz;
-        public Field getFieldValue(String columnValue) throws NoSuchFieldException, IllegalAccessException {
+        public Field getFieldValue(String columnValue) throws NoSuchFieldException{
             Field fieldID = clazz.getDeclaredField(columnValue);
             fieldID.setAccessible(true);
             return fieldID;

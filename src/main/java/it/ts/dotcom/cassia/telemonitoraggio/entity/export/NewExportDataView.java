@@ -27,12 +27,7 @@ public class NewExportDataView {
     @OneToMany(mappedBy = "newExportDataView", orphanRemoval = true)
     private Set<EsitoExport> esitoExports = new LinkedHashSet<>();
 
-    @ManyToOne
-    @JoinColumn(name = "additional_fiel_export_id")
-    private AdditionalFielExport additionalFielExport;
-
-    @ManyToOne
-    @JoinColumn(name = "esito_export_id")
-    private EsitoExport esitoExport;
+    @OneToMany(mappedBy = "newExportDataView", orphanRemoval = true)
+    private Set<AdditionalFielExport> additionalFielExports = new LinkedHashSet<>();
 
 }

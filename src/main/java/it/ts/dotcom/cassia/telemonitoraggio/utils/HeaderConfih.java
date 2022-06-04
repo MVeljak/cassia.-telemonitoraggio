@@ -12,4 +12,11 @@ public class HeaderConfih {
     public ExsportHeaderPassi headerPassi(){
         return new ExsportHeaderPassi();
     }
+
+
+    @Bean
+    @ConfigurationProperties(prefix = "user-export")
+    public ExsportHeaderUser headerUser(){
+        return new ExsportHeaderUser();
+    }
 }

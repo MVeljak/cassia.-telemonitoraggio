@@ -26,7 +26,12 @@ class ExsportHeaderPassiTest {
     @Autowired
     private ExsportHeaderPassi headerPassi;
 
+
+    @Autowired
+    private ExsportHeaderUser headerUser;
+
     private ExportlDataViewDto dataViewDto;
+//    private ExportlDataViewDto dataViewDto;
 
 //    private final static Instant  DATA_TENTATIVO = Date.valueOf("2022-05-03").toInstant();
 
@@ -50,21 +55,33 @@ class ExsportHeaderPassiTest {
 
     }
 
+
+
     @Test
-    public void whenYamlList_thenLoadSimpleList() throws  NoSuchFieldException,  IllegalAccessException {
+    public void new_import_comploex_test(){
+        System.out.println("Inizio Export Complex\n");
+    }
+
+    @Test
+    public void export_exel_normal_dto_build() throws  NoSuchFieldException,  IllegalAccessException {
 
 
         System.out.println("Inizio Export\n");
 
+        // lista dati ( ora 1 elemento)
         List<ExportlDataViewDto> singleton = Collections.singletonList(dataViewDto);
-
+        // instanzio l'exporter con il tipo dto  e i dati
         ExelExporterService<ExportlDataViewDto> exelExporterService = new ExelExporterService<>(singleton);
 
+        // estraggo l'header dallo yml
         Map<Integer, String> exportExel = headerPassi.getExport();
+        // setto l'header nell' exporter
         exelExporterService.setExportExel(exportExel);
+        // genero l'header colonne
         exelExporterService.writeHeader("sheet name test");
+        // genero le row e inserico dati
         exelExporterService.write();
-
+        // log con print
         Map<Integer, Map<Integer, Object>> extracted = exelExporterService.extrctGlobal();
         printVMap(extracted);
 
